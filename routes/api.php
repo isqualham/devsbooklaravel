@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\IsbnController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
@@ -22,11 +23,15 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 
 Route::post('/user', [UserController::class, 'store']);
+Route::put('/user', [UserController::class, 'update']);
+Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
+
+Route::post('/isbn', [IsbnController::class, 'store']);
 
 
 /*
-Route::put('/user', [UserController::class, 'update']);
-Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
+
+
 Route::post('/user/cover', [UserController::class, 'updateCover']);
 
 Route::get('/feed', [FeedController::class, 'index']);

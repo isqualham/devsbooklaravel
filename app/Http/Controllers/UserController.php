@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -19,7 +20,7 @@ class UserController extends Controller
             ]
         ]);
             
-        $this->loggedUser = auth()->user();
+        $this->loggedUser = Auth::user();
     }
     
     public function index()
@@ -31,7 +32,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:200',
+            'name' => 'required|string|max:200|min:6',
             'email' => 'required|string|email|unique:users|max:150',
             'password' => 'required|string|max:20|min:8',
             'birthdate' => 'required|date_format:Y-m-d'
@@ -41,7 +42,7 @@ class UserController extends Controller
             return response()->json($validator->errors());
         }
 
-        $user = new User();
+        $user = new User();       
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
@@ -67,22 +68,71 @@ class UserController extends Controller
     {
        
     }
-
-   
-    public function edit($id)
+          
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|max:200|min:6',
+            'email' => 'string|email|unique:users|max:150',
+            'password' => 'string|max:20|min:8',
+            'passwordConfirm' => 'string|max:20|min:8|same:password',
+            'birthdate' => 'date_format:Y-m-d',
+            'city' => 'string|max:100|min:3',
+            'work' => 'string|max:100|min:3',
+        ]);
+ 
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $user = User::find($this->loggedUser['id']);
+
+        if($request->input('name')){
+            $user->name = $request->input('name');
+        }
+        if($request->input('email')){
+            $user->email = $request->input('email'); 
+        }
+        if($request->input('password')){
+            $user->password = Hash::make($request->input('password'));            
+        }
+        if($request->input('birthdate')){
+            $user->birthdate = $request->input('birthdate');  
+        }
+              
+        $user->save();
+        
     }
 
-    
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
    
-    public function destroy($id)
+    public function updateAvatar(Request $request)
     {
-        //
+        $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+        
+        $image = $request->file('avatar');
+
+        if($image){
+            if(in_array($image->getClientMimeType(), $allowedTypes)){
+
+                $fileName = md5(time().rand(0,9999)).'.jpg';
+
+                $destPath = public_path('/media/avatars');
+
+                $img = Image::make($image->path())
+                    ->fit(200,200)
+                    ->save($destPath.'/'.$fileName);
+
+                $user = User::find($this->loggedUser['id']);
+                $user->avatar = $fileName;
+                $user->save();
+
+                return response()->json(url('/media/avatars/'.$fileName));
+
+            }else{
+                return response()->json('arquivo não suportado');
+            }
+        }else{
+            return response()->json('arquivo não enviado');
+        }
     }
 }
