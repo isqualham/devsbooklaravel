@@ -25,6 +25,9 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 Route::post('/user', [UserController::class, 'store']);
 Route::put('/user', [UserController::class, 'update']);
 Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
+Route::post('/user/cover', [UserController::class, 'updateCover']);
+
+Route::post('/feed', [FeedController::class, 'store']);
 
 Route::post('/isbn', [IsbnController::class, 'store']);
 
@@ -32,7 +35,7 @@ Route::post('/isbn', [IsbnController::class, 'store']);
 /*
 
 
-Route::post('/user/cover', [UserController::class, 'updateCover']);
+
 
 Route::get('/feed', [FeedController::class, 'index']);
 Route::get('/user/feed', [FeedController::class, 'show']);
@@ -41,7 +44,7 @@ Route::get('/user/{id}/feed', [FeedController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}', [UserController::class, 'show']);
 
-Route::post('/feed', [FeedController::class, 'store']);
+
 
 Route::post('/post/{id}/like', [PostController::class, 'like']);
 Route::post('/post/{id}/comment', [PostController::class, 'commment']);

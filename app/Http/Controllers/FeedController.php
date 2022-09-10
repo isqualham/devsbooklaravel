@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class FeedController extends Controller
 {
     private $loggedUser;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->middleware('auth:api');
 
         $this->loggedUser = auth()->user();
@@ -38,7 +41,19 @@ class FeedController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'type' => [
+                'required',
+                'string',
+                Rule::in(['text', 'photo']),
+            ],
+            'body' => 'required|string|email|unique:users|max:150',
+            'photo' => 'required|string|max:20|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
     }
 
     /**
