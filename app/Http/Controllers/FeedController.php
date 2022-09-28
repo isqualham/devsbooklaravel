@@ -41,9 +41,7 @@ class FeedController extends Controller
         if($request->input('type') == 'text'){
             if($request->input('text')){
                 $post->body =  $request->input('text');
-            }
-            
-            return response()->json('digite um texto');
+            }else{return response()->json('digite um texto');}
         }
 
         if($request->input('type') == 'photo'){
@@ -58,9 +56,8 @@ class FeedController extends Controller
                     })
                     ->save($destPath . '/' . $fileName);
                     
-                $post->body = $fileName;
-            }
-            return response()->json('insira uma imagem');            
+                $post->body = url('/media/uploads/' . $fileName);
+            }else{return response()->json('insira uma imagem');}
         }
         
         $post->user_id = $this->loggedUser['id'];
