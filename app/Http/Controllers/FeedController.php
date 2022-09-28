@@ -20,11 +20,6 @@ class FeedController extends Controller
         $this->loggedUser = auth()->user();
     }
 
-    public function index()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -74,21 +69,4 @@ class FeedController extends Controller
         $post->save();
     }
 
-   
-    public function show($id)
-    {
-        //
-    }
-  
-    
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    
-    public function destroy($id)
-    {
-        //
-    }
 }
