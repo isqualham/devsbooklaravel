@@ -29,9 +29,6 @@ Route::post('/user/cover', [UserController::class, 'updateCover']);
 
 Route::post('/feed', [FeedController::class, 'store']);
 
-Route::post('/isbn', [IsbnController::class, 'store']);
-
-
 /*
 
 

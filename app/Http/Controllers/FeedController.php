@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
 
 class FeedController extends Controller
 {
@@ -23,22 +25,6 @@ class FeedController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -47,55 +33,60 @@ class FeedController extends Controller
                 'string',
                 Rule::in(['text', 'photo']),
             ],
-            'body' => 'required|string|email|unique:users|max:150',
-            'photo' => 'required|string|max:20|min:8',
+            'text' => 'string|max:255',
+            'photo' => 'mimes:jpg,png,jpeg',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+
+        $post = new Post();
+
+        if($request->input('type') == 'text'){
+            if($request->input('text')){
+                $post->body =  $request->input('text');
+            }
+            
+            return response()->json('digite um texto');
+        }
+
+        if($request->input('type') == 'photo'){
+            if($request->file('photo')){
+                $fileName = md5(time() . rand(0, 9999)) . '.jpg';
+        
+                $destPath = public_path('/media/uploads');
+        
+                $img = Image::make($request->file('photo')->path())
+                    ->resize(800, null, function($constraint){
+                        $constraint->aspectRatio();
+                    })
+                    ->save($destPath . '/' . $fileName);
+                    
+                $post->body = $fileName;
+            }
+            return response()->json('insira uma imagem');            
+        }
+        
+        $post->user_id = $this->loggedUser['id'];
+        $post->type = $request->input('type');
+        $post->created_at =  date('Y-m-d H:i:s');
+        $post->save();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   
     public function show($id)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+  
+    
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
         //
