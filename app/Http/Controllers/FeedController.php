@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\PostComment;
+use App\Models\PostLike;
+use App\Models\User;
+use App\Models\UserRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +22,60 @@ class FeedController extends Controller
         $this->middleware('auth:api');
 
         $this->loggedUser = auth()->user();
+    }
+
+    public function index(Request $request){
+
+        $user = [];
+        $userList = UserRelation::whereUserFron($this->loggedUser['id'])
+            ->get();
+
+        foreach($userList as $user){
+            $user [] = $user->user_to;
+        }
+
+        $user [] = $this->loggedUser['id']; 
+
+        $postList = Post::whereIn('user_id', $user)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+
+        $posts = $this->postListToObject($postList, $this->loggedUser['id']);
+
+        return response()->json($posts);
+    }
+
+    private function postListToObject($postList, $loggedUser){
+        foreach($postList as $postKey => $postItem){
+            if($postItem->user_id == $loggedUser){
+                $postList[$postKey]['mine'] = true;
+            }else{
+                $postList[$postKey]['mine'] = false;
+            }
+
+            $userInfo = User::find($postItem->user_id);
+            $postList[$postKey]['user'] = $userInfo;
+
+            $likes = PostLike::wherePostId($postItem->id)->count();
+            $postList[$postKey]['likeCount'] = $likes;
+
+            $isLiked = PostLike::wherePostId($postItem->id)
+                ->whereUserId($loggedUser)
+                ->count();
+            
+            $postList[$postKey]['liked'] = ($isLiked >0) ? true : false;
+
+            $comments = PostComment::wherePostId($postItem->id)->get();
+
+            foreach($comments as $commentKey => $comment){
+                $user = User::find($comment->user_id);
+                $comments[$commentKey]['user'] = $user;
+            }
+
+            $postList[$postKey]['comments'] = $comments;            
+        }
+        
+        return $postList;
     }
 
     public function store(Request $request)

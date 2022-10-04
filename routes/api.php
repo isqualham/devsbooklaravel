@@ -28,13 +28,14 @@ Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
 Route::post('/user/cover', [UserController::class, 'updateCover']);
 
 Route::post('/feed', [FeedController::class, 'store']);
+Route::get('/feed', [FeedController::class, 'index']);
 
 /*
 
 
 
 
-Route::get('/feed', [FeedController::class, 'index']);
+
 Route::get('/user/feed', [FeedController::class, 'show']);
 Route::get('/user/{id}/feed', [FeedController::class, 'show']);
 
