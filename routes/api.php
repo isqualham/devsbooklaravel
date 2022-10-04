@@ -30,17 +30,21 @@ Route::post('/user/cover', [UserController::class, 'updateCover']);
 Route::post('/feed', [FeedController::class, 'store']);
 Route::get('/feed', [FeedController::class, 'index']);
 
+Route::get('/user/feed', [FeedController::class, 'show']);
+Route::get('/user/{id}/feed', [FeedController::class, 'show']);
+
+Route::get('/user', [UserController::class, 'index']);
+Route::get('/user/{id}', [UserController::class, 'show']);
+
 /*
 
 
 
 
 
-Route::get('/user/feed', [FeedController::class, 'show']);
-Route::get('/user/{id}/feed', [FeedController::class, 'show']);
 
-Route::get('/user', [UserController::class, 'index']);
-Route::get('/user/{id}', [UserController::class, 'show']);
+
+
 
 
 

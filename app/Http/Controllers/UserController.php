@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,9 +27,19 @@ class UserController extends Controller
 
     public function index()
     {
-        //
+        $info = $this->loggedUser;
+
+        return response()->json($info);
     }
 
+    public function show($id = false)
+    {
+        if (!User::find($id)) return response()->json('usuário não existe');
+
+        $info = User::find($id);
+
+        return response()->json($info);
+    }
 
     public function store(Request $request)
     {
@@ -62,11 +73,6 @@ class UserController extends Controller
         $message = "usuário criado com sucesso $token";
 
         return response()->json($message, 200);
-    }
-
-
-    public function show(Request $request)
-    {
     }
 
     public function update(Request $request)
