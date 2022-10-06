@@ -61,6 +61,19 @@ class PostController extends Controller
         return response()->json($postList);
     }
 
+    public function photos()
+    {       
+        $postList = Post::where('user_id', $this->loggedUser['id'])
+            ->where('type','photo')
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+
+        $posts = $this->postListToObject($postList, $this->loggedUser['id']);
+
+        return response()->json($posts);
+        
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

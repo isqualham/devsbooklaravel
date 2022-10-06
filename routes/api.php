@@ -26,7 +26,9 @@ Route::post('/post', [PostController::class, 'store']);
 Route::get('/post', [PostController::class, 'index']);
 
 Route::get('/post', [PostController::class, 'show']);
+Route::get('/post/photos', [PostController::class, 'photos']);
 Route::get('/post/{id}', [PostController::class, 'show']);
+
 
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}', [UserController::class, 'show']);
