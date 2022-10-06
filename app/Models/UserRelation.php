@@ -9,4 +9,10 @@ class UserRelation extends Model
 {
     protected $table = 'users_relations';
     public $timestamps = false;
+
+    protected $fillable = [
+        'user_fron',
+        'user_to',
+    ];
+    
 }

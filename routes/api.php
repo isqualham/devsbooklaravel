@@ -1,20 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FeedController;
-use App\Http\Controllers\IsbnController;
+use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserRelationController;
 use Illuminate\Support\Facades\Route;
 
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::get('/401', [AuthController::class, 'unauthorized'])->name('login');
 
@@ -37,24 +31,13 @@ Route::get('/post/{id}', [PostController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}', [UserController::class, 'show']);
 
+Route::post('/userRelation', [UserRelationController::class, 'like']);
+
+Route::get('/userRelation', [UserRelationController::class, 'index']);
+
 Route::post('/postLike', [PostLikeController::class, 'store']);
 Route::delete('/postLike/{id}', [PostLikeController::class, 'destroy']);
 
-/*
+Route::post('/postComment', [PostCommentController::class, 'like']);
 
-
-
-
-
-
-
-
-
-
-
-
-Route::post('/post/{id}/comment', [PostController::class, 'commment']);
-
-Route::post('/search', [SearchController::class, 'search']);
-
-*/
+Route::get('/search', [SearchController::class, 'search']);
